@@ -151,6 +151,7 @@ export interface ApiSavedStarGift {
   localTag?: number; // Local field, used for key in list
   dropOriginalDetailsStars?: number;
   canCraftAt?: number;
+  collectionIds?: number[];
 }
 
 export type StarGiftAttributeIdModel = {

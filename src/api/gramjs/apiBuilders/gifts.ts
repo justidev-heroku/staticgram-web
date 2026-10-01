@@ -195,7 +195,7 @@ export function buildApiSavedStarGift(userStarGift: GramJs.SavedStarGift, peerId
   const {
     gift, date, convertStars, fromId, message, msgId, nameHidden, unsaved, refunded, upgradeStars, transferStars,
     canUpgrade, savedId, canExportAt, pinnedToTop, canResellAt, canTransferAt, prepaidUpgradeHash,
-    dropOriginalDetailsStars, canCraftAt,
+    dropOriginalDetailsStars, canCraftAt, collectionId,
   } = userStarGift;
 
   const inputGift: ApiInputSavedStarGift | undefined = savedId && peerId
@@ -224,6 +224,7 @@ export function buildApiSavedStarGift(userStarGift: GramJs.SavedStarGift, peerId
     dropOriginalDetailsStars: dropOriginalDetailsStars !== undefined ? toJSNumber(dropOriginalDetailsStars) : undefined,
     prepaidUpgradeHash,
     canCraftAt,
+    collectionIds: collectionId,
   };
 }
 

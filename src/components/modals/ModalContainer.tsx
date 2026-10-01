@@ -38,6 +38,7 @@ import GiftAuctionBidModal from './gift/auction/GiftAuctionBidModal.async';
 import GiftAuctionChangeRecipientModal from './gift/auction/GiftAuctionChangeRecipientModal.async';
 import GiftAuctionInfoModal from './gift/auction/GiftAuctionInfoModal.async';
 import GiftAuctionModal from './gift/auction/GiftAuctionModal.async';
+import GiftCollectionModal from './gift/collection/GiftCollectionModal.async';
 import GiftCraftInfoModal from './gift/craft/GiftCraftInfoModal.async';
 import GiftCraftModal from './gift/craft/GiftCraftModal.async';
 import GiftCraftSelectModal from './gift/craft/GiftCraftSelectModal.async';
@@ -150,6 +151,7 @@ type ModalKey = keyof Pick<TabState,
   'giftDescriptionRemoveModal' |
   'giftOfferAcceptModal' |
   'giftOfferSendModal' |
+  'giftCollectionModal' |
   'chatRefundModal' |
   'disableSharingAboutModal' |
   'priceConfirmModal' |
@@ -293,6 +295,7 @@ const LEGACY_MODALS: LegacyModalRegistry = {
   giftDescriptionRemoveModal: GiftDescriptionRemoveModal,
   giftOfferAcceptModal: GiftOfferAcceptModal,
   giftOfferSendModal: GiftOfferSendModal,
+  giftCollectionModal: GiftCollectionModal,
   chatRefundModal: ChatRefundModal,
   disableSharingAboutModal: DisableSharingAboutModal,
   priceConfirmModal: PriceConfirmModal,

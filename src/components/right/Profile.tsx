@@ -65,7 +65,10 @@ import {
 } from '../../global/selectors';
 import { selectPremiumLimit } from '../../global/selectors/limits';
 import { selectMessageDownloadableMedia } from '../../global/selectors/media';
-import { selectActiveGiftsCollectionId } from '../../global/selectors/payments';
+import {
+  selectActiveGiftsCollectionId,
+  selectCanUseGiftProfileAdminFilter,
+} from '../../global/selectors/payments';
 import { selectSharedSettings } from '../../global/selectors/sharedState';
 import { selectActiveStoriesCollectionId } from '../../global/selectors/stories';
 import {
@@ -162,6 +165,7 @@ type StateProps = {
   gifts?: ApiSavedStarGift[];
   storyAlbums?: ApiStoryAlbum[];
   giftCollections?: ApiStarGiftCollection[];
+  canManageGiftCollections?: boolean;
   areMembersHidden?: boolean;
   canAddMembers?: boolean;
   canDeleteMembers?: boolean;
@@ -293,6 +297,7 @@ const Profile = ({
   gifts,
   storyAlbums,
   giftCollections,
+  canManageGiftCollections,
   botPreviewMedia,
   areMembersHidden,
   canAddMembers,
@@ -661,7 +666,8 @@ const Profile = ({
   const [isGiftCollectionsShowed, markGiftCollectionsShowed, unmarkGiftCollectionsShowed] = useFlag(false);
   const [isStoryAlbumsShowed, markStoryAlbumsShowed, unmarkStoryAlbums] = useFlag(false);
 
-  const hasGiftsCollections = giftCollections && giftCollections.length > 0;
+  // Owners always see the panel: it carries the "New collection" tab
+  const hasGiftsCollections = Boolean(giftCollections?.length || (canManageGiftCollections && giftCollections));
   const hasStoryAlbums = storyAlbums && storyAlbums.length > 0;
   const isGiftsResult = resultType === 'gifts';
   const isStoriesResult = resultType === 'stories';
@@ -1578,6 +1584,7 @@ export default memo(withGlobal<OwnProps>(
       gifts: peerGifts?.gifts,
       storyAlbums,
       giftCollections,
+      canManageGiftCollections: Boolean(selectCanUseGiftProfileAdminFilter(global, chatId)),
       pinnedStoryIds,
       archiveStoryIds,
       storyByIds,

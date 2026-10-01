@@ -42,6 +42,7 @@ const GiftMenuItems = ({
     changeGiftVisibility,
     updateStarGiftPrice,
     closeGiftInfoModal,
+    openGiftCollectionModal,
   } = getActions();
 
   const lang = useLang();
@@ -72,6 +73,14 @@ const GiftMenuItems = ({
   const giftResalePrice = isGiftUnique ? gift.resellPrice : undefined;
 
   const hasPinOptions = canManage && savedGift && !savedGift.isUnsaved && isGiftUnique;
+
+  const canEditCollections = canManage && savedGift?.inputGift;
+
+  const handleOpenCollections = useLastCallback(() => {
+    if (!savedGift) return;
+    closeGiftInfoModal();
+    openGiftCollectionModal({ peerId, mode: 'pick', gift: savedGift });
+  });
 
   const handleTriggerVisibility = useLastCallback(() => {
     const { inputGift, isUnsaved } = savedGift!;
@@ -158,6 +167,11 @@ const GiftMenuItems = ({
       {hasPinOptions && (
         <MenuItem icon={savedGift.isPinned ? 'unpin' : 'pin'} onClick={handleTogglePin}>
           {lang(savedGift.isPinned ? 'ChatListUnpinFromTop' : 'ChatListPinToTop')}
+        </MenuItem>
+      )}
+      {canEditCollections && (
+        <MenuItem icon="folder" onClick={handleOpenCollections}>
+          {lang('GiftCollectionAddTo')}
         </MenuItem>
       )}
       <MenuItem icon="link-badge" onClick={handleCopyLink}>

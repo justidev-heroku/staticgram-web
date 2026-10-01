@@ -1849,6 +1849,22 @@ export interface LangPair {
   'GiftOfferEnterPrice': undefined;
   'GiftOfferDuration': undefined;
   'GiftOfferNotEnoughStars': undefined;
+  'GiftCollectionNewTab': undefined;
+  'GiftCollectionMenu': undefined;
+  'GiftCollectionCreate': undefined;
+  'GiftCollectionNewTitle': undefined;
+  'GiftCollectionCreateHint': undefined;
+  'GiftCollectionCreateWithGiftHint': undefined;
+  'GiftCollectionNameLabel': undefined;
+  'GiftCollectionCreateButton': undefined;
+  'GiftCollectionSave': undefined;
+  'GiftCollectionRename': undefined;
+  'GiftCollectionMoveLeft': undefined;
+  'GiftCollectionMoveRight': undefined;
+  'GiftCollectionDelete': undefined;
+  'GiftCollectionAddTo': undefined;
+  'GiftCollectionEmptyList': undefined;
+  'GiftCollectionDone': undefined;
   'ActionSuggestedPhotoButton': undefined;
   'ActionSuggestedVideoTitle': undefined;
   'ActionSuggestedVideoText': undefined;
@@ -3529,6 +3545,15 @@ export interface LangPairWithVariables<V = LangVariable> {
     'gift': V;
     'user': V;
   };
+  'GiftCollectionDeleteConfirm': {
+    'title': V;
+  };
+  'GiftCollectionCreated': {
+    'title': V;
+  };
+  'GiftCollectionGiftAdded': {
+    'title': V;
+  };
   'GiftOfferPriceHigh': {
     'percent': V;
     'gift': V;
@@ -4234,6 +4259,9 @@ export interface LangPairPluralWithVariables<V = LangVariable> {
     'count': V;
   };
   'Participants': {
+    'count': V;
+  };
+  'GiftCollectionGiftsCount': {
     'count': V;
   };
   'OnlineCount': {

@@ -619,6 +619,81 @@ export async function fetchStarGiftCollections({
   };
 }
 
+export async function createStarGiftCollection({
+  peer,
+  title,
+  inputSavedGifts,
+}: {
+  peer: ApiPeer;
+  title: string;
+  inputSavedGifts: ApiRequestInputSavedStarGift[];
+}) {
+  const result = await invokeRequest(new GramJs.payments.CreateStarGiftCollection({
+    peer: buildInputPeer(peer.id, peer.accessHash),
+    title,
+    stargift: inputSavedGifts.map(buildInputSavedStarGift),
+  }));
+
+  return result && buildApiStarGiftCollection(result);
+}
+
+export async function updateStarGiftCollection({
+  peer,
+  collectionId,
+  title,
+  addInputSavedGifts,
+  deleteInputSavedGifts,
+  orderInputSavedGifts,
+}: {
+  peer: ApiPeer;
+  collectionId: number;
+  title?: string;
+  addInputSavedGifts?: ApiRequestInputSavedStarGift[];
+  deleteInputSavedGifts?: ApiRequestInputSavedStarGift[];
+  orderInputSavedGifts?: ApiRequestInputSavedStarGift[];
+}) {
+  const result = await invokeRequest(new GramJs.payments.UpdateStarGiftCollection({
+    peer: buildInputPeer(peer.id, peer.accessHash),
+    collectionId,
+    title,
+    addStargift: addInputSavedGifts?.map(buildInputSavedStarGift),
+    deleteStargift: deleteInputSavedGifts?.map(buildInputSavedStarGift),
+    order: orderInputSavedGifts?.map(buildInputSavedStarGift),
+  }));
+
+  return result && buildApiStarGiftCollection(result);
+}
+
+export function reorderStarGiftCollections({
+  peer,
+  order,
+}: {
+  peer: ApiPeer;
+  order: number[];
+}) {
+  return invokeRequest(new GramJs.payments.ReorderStarGiftCollections({
+    peer: buildInputPeer(peer.id, peer.accessHash),
+    order,
+  }), {
+    shouldReturnTrue: true,
+  });
+}
+
+export function deleteStarGiftCollection({
+  peer,
+  collectionId,
+}: {
+  peer: ApiPeer;
+  collectionId: number;
+}) {
+  return invokeRequest(new GramJs.payments.DeleteStarGiftCollection({
+    peer: buildInputPeer(peer.id, peer.accessHash),
+    collectionId,
+  }), {
+    shouldReturnTrue: true,
+  });
+}
+
 export function resolveStarGiftOffer({
   offerMsgId,
   shouldDecline,

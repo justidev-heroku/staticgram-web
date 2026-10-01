@@ -3,7 +3,7 @@ import {
 } from '../../lib/teact/teact';
 import { getActions, withGlobal } from '../../global';
 
-import type { ApiExportedInvite } from '../../api/types';
+import type { ApiExportedInvite, ApiStarGiftCollection } from '../../api/types';
 import type { GiftProfileFilterOptions, ThreadId } from '../../types';
 import { MAIN_THREAD_ID } from '../../api/types';
 import { ManagementScreens, ProfileState, SettingsScreens } from '../../types';
@@ -13,12 +13,14 @@ import {
   getCanAddContact, getCanManageTopic, isChatChannel, isUserBot,
 } from '../../global/helpers';
 import {
+  selectActiveGiftsCollectionId,
   selectCanManage,
   selectCanUseGiftProfileAdminFilter,
   selectCanUseGiftProfileFilter,
   selectChat,
   selectChatFullInfo,
   selectIsChatWithSelf,
+  selectPeerStarGiftCollections,
   selectTabState,
   selectTopic,
   selectUser,
@@ -82,6 +84,8 @@ type StateProps = {
   giftProfileFilter: GiftProfileFilterOptions;
   canUseGiftFilter?: boolean;
   canUseGiftAdminFilter?: boolean;
+  giftCollections?: ApiStarGiftCollection[];
+  activeGiftCollectionId?: number;
   isInsideTopic?: boolean;
   canEditTopic?: boolean;
   isSavedMessages?: boolean;
@@ -166,6 +170,8 @@ const RightHeader = ({
   giftProfileFilter,
   canUseGiftFilter,
   canUseGiftAdminFilter,
+  giftCollections,
+  activeGiftCollectionId,
   isOwnProfile,
   onClose,
   onScreenSelect,
@@ -179,9 +185,15 @@ const RightHeader = ({
     openEditTopicPanel,
     updateGiftProfileFilter,
     openSettingsScreen,
+    openGiftCollectionModal,
+    deleteStarGiftCollection,
+    reorderStarGiftCollections,
   } = getActions();
 
   const [isDeleteDialogOpen, openDeleteDialog, closeDeleteDialog] = useFlag();
+  const [
+    isDeleteCollectionDialogOpen, openDeleteCollectionDialog, closeDeleteCollectionDialog,
+  ] = useFlag();
   const { isMobile } = useAppLayout();
 
   const {
@@ -348,6 +360,52 @@ const RightHeader = ({
     return oldLang('GroupInfo.Title');
   }
 
+  const activeGiftCollectionIndex = activeGiftCollectionId !== undefined && giftCollections
+    ? giftCollections.findIndex((c) => c.collectionId === activeGiftCollectionId)
+    : -1;
+  const activeGiftCollection = activeGiftCollectionIndex >= 0 ? giftCollections![activeGiftCollectionIndex] : undefined;
+
+  const handleCreateGiftCollection = useLastCallback(() => {
+    if (!chatId) return;
+    openGiftCollectionModal({ peerId: chatId, mode: 'create' });
+  });
+
+  const handleRenameGiftCollection = useLastCallback(() => {
+    if (!chatId || !activeGiftCollection) return;
+    openGiftCollectionModal({ peerId: chatId, mode: 'rename', collectionId: activeGiftCollection.collectionId });
+  });
+
+  const handleMoveGiftCollection = useLastCallback((offset: number) => {
+    if (!chatId || !giftCollections || activeGiftCollectionIndex < 0) return;
+    const newIndex = activeGiftCollectionIndex + offset;
+    if (newIndex < 0 || newIndex >= giftCollections.length) return;
+
+    const order = giftCollections.map((c) => c.collectionId);
+    [order[activeGiftCollectionIndex], order[newIndex]] = [order[newIndex], order[activeGiftCollectionIndex]];
+    reorderStarGiftCollections({ peerId: chatId, order });
+  });
+
+  const handleDeleteGiftCollection = useLastCallback(() => {
+    closeDeleteCollectionDialog();
+    if (!chatId || !activeGiftCollection) return;
+    deleteStarGiftCollection({ peerId: chatId, collectionId: activeGiftCollection.collectionId });
+  });
+
+  const GiftCollectionMenuButton = useMemo(() => {
+    return ({ onTrigger, isOpen }: { onTrigger: () => void; isOpen?: boolean }) => (
+      <Button
+        round
+        ripple={!isMobile}
+        size="smaller"
+        color="translucent"
+        className={isOpen ? 'active' : ''}
+        onClick={onTrigger}
+        ariaLabel={lang('GiftCollectionMenu')}
+        iconName="folder"
+      />
+    );
+  }, [isMobile, lang]);
+
   const PrimaryLinkMenuButton = useMemo(() => {
     return ({ onTrigger, isOpen }: { onTrigger: () => void; isOpen?: boolean }) => (
       <Button
@@ -502,6 +560,48 @@ const RightHeader = ({
             <h3 className="title">{lang('ProfileTabGifts')}</h3>
             {canUseGiftFilter && chatId && (
               <section className="tools">
+                {canUseGiftAdminFilter && (
+                  <DropdownMenu
+                    trigger={GiftCollectionMenuButton}
+                    positionX="right"
+                  >
+                    <MenuItem icon="add" onClick={handleCreateGiftCollection}>
+                      {lang('GiftCollectionCreate')}
+                    </MenuItem>
+                    {activeGiftCollection && (
+                      <>
+                        <MenuSeparator />
+                        <MenuItem icon="edit" onClick={handleRenameGiftCollection}>
+                          {lang('GiftCollectionRename')}
+                        </MenuItem>
+                        {activeGiftCollectionIndex > 0 && (
+                          <MenuItem icon="arrow-left" onClick={() => handleMoveGiftCollection(-1)}>
+                            {lang('GiftCollectionMoveLeft')}
+                          </MenuItem>
+                        )}
+                        {activeGiftCollectionIndex < giftCollections!.length - 1 && (
+                          <MenuItem icon="arrow-right" onClick={() => handleMoveGiftCollection(1)}>
+                            {lang('GiftCollectionMoveRight')}
+                          </MenuItem>
+                        )}
+                        <MenuItem icon="delete" destructive onClick={openDeleteCollectionDialog}>
+                          {lang('GiftCollectionDelete')}
+                        </MenuItem>
+                      </>
+                    )}
+                  </DropdownMenu>
+                )}
+                <ConfirmDialog
+                  isOpen={isDeleteCollectionDialogOpen}
+                  onClose={closeDeleteCollectionDialog}
+                  title={lang('GiftCollectionDelete')}
+                  textParts={lang('GiftCollectionDeleteConfirm', {
+                    title: activeGiftCollection?.title || '',
+                  }, { withNodes: true, withMarkdown: true })}
+                  confirmIsDestructive
+                  confirmLabel={lang('Delete')}
+                  confirmHandler={handleDeleteGiftCollection}
+                />
                 <DropdownMenu
                   trigger={PrimaryLinkMenuButton}
                   positionX="right"
@@ -711,6 +811,9 @@ export default withGlobal<OwnProps>(
     const giftProfileFilter = tabState.savedGifts.filter;
     const canUseGiftFilter = chatId ? selectCanUseGiftProfileFilter(global, chatId) : false;
     const canUseGiftAdminFilter = chatId ? selectCanUseGiftProfileAdminFilter(global, chatId) : false;
+    const giftCollections = chatId ? selectPeerStarGiftCollections(global, chatId) : undefined;
+    const activeCollectionKey = chatId ? selectActiveGiftsCollectionId(global, chatId) : 'all';
+    const activeGiftCollectionId = activeCollectionKey === 'all' ? undefined : activeCollectionKey;
 
     return {
       canManage,
@@ -730,6 +833,8 @@ export default withGlobal<OwnProps>(
       giftProfileFilter,
       canUseGiftFilter,
       canUseGiftAdminFilter,
+      giftCollections,
+      activeGiftCollectionId,
       isOwnProfile,
     };
   },

@@ -5,7 +5,7 @@ import type {
   ApiStarGiftAttribute,
   ApiStarGiftUnique,
 } from '../../../api/types';
-import type { ActionReturnType } from '../../types';
+import type { ActionReturnType, GlobalState } from '../../types';
 
 import {
   DEFAULT_RESALE_GIFTS_FILTER_OPTIONS,
@@ -42,6 +42,7 @@ import {
   selectPeer,
   selectPeerCollectionSavedGifts,
   selectPeerSavedGifts,
+  selectPeerStarGiftCollections,
   selectTabState,
 } from '../../selectors';
 
@@ -779,6 +780,119 @@ addActionHandler('sendStarGiftOffer', async (global, actions, payload): Promise<
     },
     tabId,
   });
+});
+
+function buildRequestInputSavedGifts<T extends GlobalState>(global: T, gifts?: ApiInputSavedStarGift[]) {
+  return gifts?.map((gift) => getRequestInputSavedStarGift(global, gift)).filter(Boolean);
+}
+
+addActionHandler('createStarGiftCollection', async (global, actions, payload): Promise<void> => {
+  const {
+    peerId, title, gifts, tabId = getCurrentTabId(),
+  } = payload;
+
+  const peer = selectPeer(global, peerId);
+  if (!peer) return;
+
+  const result = await callApi('createStarGiftCollection', {
+    peer,
+    title,
+    inputSavedGifts: buildRequestInputSavedGifts(global, gifts) || [],
+  });
+
+  if (!result) return;
+
+  global = getGlobal();
+  const collections = selectPeerStarGiftCollections(global, peerId) || [];
+  global = updatePeerStarGiftCollections(global, peerId, [
+    ...collections.filter((c) => c.collectionId !== result.collectionId),
+    result,
+  ]);
+  setGlobal(global);
+
+  if (gifts?.length) {
+    actions.reloadPeerSavedGifts({ peerId });
+  }
+
+  actions.showNotification({
+    icon: 'check',
+    message: gifts?.length
+      ? { key: 'GiftCollectionGiftAdded', variables: { title } }
+      : { key: 'GiftCollectionCreated', variables: { title } },
+    tabId,
+  });
+});
+
+addActionHandler('updateStarGiftCollection', async (global, actions, payload): Promise<void> => {
+  const {
+    peerId, collectionId, title, addGifts, removeGifts,
+  } = payload;
+
+  const peer = selectPeer(global, peerId);
+  if (!peer) return;
+
+  const result = await callApi('updateStarGiftCollection', {
+    peer,
+    collectionId,
+    title,
+    addInputSavedGifts: buildRequestInputSavedGifts(global, addGifts),
+    deleteInputSavedGifts: buildRequestInputSavedGifts(global, removeGifts),
+  });
+
+  if (!result) return;
+
+  global = getGlobal();
+  const collections = selectPeerStarGiftCollections(global, peerId) || [];
+  global = updatePeerStarGiftCollections(global, peerId, collections.map((c) => (
+    c.collectionId === collectionId ? result : c
+  )));
+  setGlobal(global);
+
+  if (addGifts?.length || removeGifts?.length) {
+    actions.reloadPeerSavedGifts({ peerId });
+  }
+});
+
+addActionHandler('deleteStarGiftCollection', async (global, actions, payload): Promise<void> => {
+  const { peerId, collectionId } = payload;
+
+  const peer = selectPeer(global, peerId);
+  if (!peer) return;
+
+  const result = await callApi('deleteStarGiftCollection', { peer, collectionId });
+  if (!result) return;
+
+  global = getGlobal();
+  const collections = selectPeerStarGiftCollections(global, peerId) || [];
+  global = updatePeerStarGiftCollections(global, peerId, collections.filter((c) => c.collectionId !== collectionId));
+  setGlobal(global);
+
+  Object.values(global.byTabId).forEach((tabState) => {
+    if (selectActiveGiftsCollectionId(global, peerId, tabState.id) === collectionId) {
+      actions.resetSelectedGiftCollection({ peerId, tabId: tabState.id });
+    }
+  });
+  actions.reloadPeerSavedGifts({ peerId });
+});
+
+addActionHandler('reorderStarGiftCollections', async (global, actions, payload): Promise<void> => {
+  const { peerId, order } = payload;
+
+  const peer = selectPeer(global, peerId);
+  if (!peer) return;
+
+  const oldCollections = selectPeerStarGiftCollections(global, peerId) || [];
+  const byId = new Map(oldCollections.map((c) => [c.collectionId, c]));
+  const newCollections = order.map((id) => byId.get(id)).filter(Boolean);
+  global = updatePeerStarGiftCollections(global, peerId, newCollections);
+  setGlobal(global);
+
+  const result = await callApi('reorderStarGiftCollections', { peer, order });
+  if (!result) {
+    global = getGlobal();
+    global = updatePeerStarGiftCollections(global, peerId, oldCollections);
+    setGlobal(global);
+  }
 });
 
 addActionHandler('loadActiveGiftAuctions', async (global, actions, payload): Promise<void> => {

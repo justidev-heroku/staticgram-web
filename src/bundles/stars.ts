@@ -31,6 +31,7 @@ export { default as GiftTransferConfirmModal } from '../components/modals/gift/t
 export { default as GiftDescriptionRemoveModal } from '../components/modals/gift/message/GiftDescriptionRemoveModal';
 export { default as GiftOfferAcceptModal } from '../components/modals/gift/offer/GiftOfferAcceptModal';
 export { default as GiftOfferSendModal } from '../components/modals/gift/offer/GiftOfferSendModal';
+export { default as GiftCollectionModal } from '../components/modals/gift/collection/GiftCollectionModal';
 export { default as ChatRefundModal } from '../components/modals/stars/chatRefund/ChatRefundModal';
 export { default as PriceConfirmModal } from '../components/modals/priceConfirm/PriceConfirmModal';
 export { default as ActiveGiftAuctionsModal } from '../components/modals/gift/auction/ActiveGiftAuctionsModal';

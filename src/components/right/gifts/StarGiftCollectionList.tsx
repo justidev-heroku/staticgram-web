@@ -6,7 +6,7 @@ import type { ProfileCollectionKey } from '../../../global/selectors/payments';
 import type { AnimationLevel } from '../../../types';
 import type { TabItem } from '../../common/AnimatedTabList';
 
-import { selectActiveGiftsCollectionId } from '../../../global/selectors';
+import { selectActiveGiftsCollectionId, selectCanUseGiftProfileAdminFilter } from '../../../global/selectors';
 import { selectSharedSettings } from '../../../global/selectors/sharedState';
 import buildClassName from '../../../util/buildClassName';
 
@@ -25,7 +25,10 @@ type StateProps = {
   collections?: ApiStarGiftCollection[];
   activeCollectionId: ProfileCollectionKey;
   animationLevel: AnimationLevel;
+  canManage: boolean;
 };
+
+const NEW_COLLECTION_TAB_ID = 'new';
 
 const StarGiftCollectionList = ({
   peerId,
@@ -33,12 +36,15 @@ const StarGiftCollectionList = ({
   collections,
   activeCollectionId,
   animationLevel,
+  canManage,
 }: StateProps & OwnProps) => {
-  const { updateSelectedGiftCollection, resetSelectedGiftCollection } = getActions();
+  const { updateSelectedGiftCollection, resetSelectedGiftCollection, openGiftCollectionModal } = getActions();
   const lang = useLang();
 
   const handleItemSelect = useLastCallback((itemId: string) => {
-    if (itemId === 'all') {
+    if (itemId === NEW_COLLECTION_TAB_ID) {
+      openGiftCollectionModal({ peerId, mode: 'create' });
+    } else if (itemId === 'all') {
       resetSelectedGiftCollection({ peerId });
     } else {
       const collectionId = Number(itemId);
@@ -56,9 +62,13 @@ const StarGiftCollectionList = ({
       title: collection.title,
       sticker: collection.icon,
     })),
-  ], [collections, lang]);
+    ...(canManage ? [{
+      id: NEW_COLLECTION_TAB_ID,
+      title: `+ ${lang('GiftCollectionNewTab')}`,
+    }] : []),
+  ], [collections, lang, canManage]);
 
-  if (!collections || collections.length === 0) {
+  if (!collections || (collections.length === 0 && !canManage)) {
     return undefined;
   }
 
@@ -85,6 +95,7 @@ export default memo(withGlobal<OwnProps>(
       collections,
       activeCollectionId,
       animationLevel: selectSharedSettings(global).animationLevel,
+      canManage: Boolean(selectCanUseGiftProfileAdminFilter(global, peerId)),
     };
   },
 )(StarGiftCollectionList));

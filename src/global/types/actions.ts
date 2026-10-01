@@ -3221,6 +3221,13 @@ export interface ActionPayloads {
     gift: ApiStarGiftUnique;
   } & WithTabId;
   closeGiftOfferSendModal: WithTabId | undefined;
+  openGiftCollectionModal: {
+    peerId: string;
+    mode: 'create' | 'rename' | 'pick';
+    collectionId?: number;
+    gift?: ApiSavedStarGift;
+  } & WithTabId;
+  closeGiftCollectionModal: WithTabId | undefined;
   updateSelectedGiftCollection: {
     peerId: string;
     collectionId: number;
@@ -3263,6 +3270,26 @@ export interface ActionPayloads {
   } & WithTabId;
   declineStarGiftOffer: {
     messageId: number;
+  } & WithTabId;
+  createStarGiftCollection: {
+    peerId: string;
+    title: string;
+    gifts?: ApiInputSavedStarGift[];
+  } & WithTabId;
+  updateStarGiftCollection: {
+    peerId: string;
+    collectionId: number;
+    title?: string;
+    addGifts?: ApiInputSavedStarGift[];
+    removeGifts?: ApiInputSavedStarGift[];
+  } & WithTabId;
+  deleteStarGiftCollection: {
+    peerId: string;
+    collectionId: number;
+  } & WithTabId;
+  reorderStarGiftCollections: {
+    peerId: string;
+    order: number[];
   } & WithTabId;
   sendStarGiftOffer: {
     peerId: string;

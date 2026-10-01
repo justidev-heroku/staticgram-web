@@ -988,6 +988,13 @@ export type TabState = {
     details: ApiStarGiftAttributeOriginalDetails;
   };
 
+  giftCollectionModal?: {
+    peerId: string;
+    mode: 'create' | 'rename' | 'pick';
+    collectionId?: number;
+    gift?: ApiSavedStarGift;
+  };
+
   giftOfferSendModal?: {
     peerId: string;
     gift: ApiStarGiftUnique;

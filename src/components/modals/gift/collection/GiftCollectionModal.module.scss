@@ -1,0 +1,30 @@
+.description {
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.375;
+  color: var(--color-text-secondary);
+}
+
+.input {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.empty {
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

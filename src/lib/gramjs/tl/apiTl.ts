@@ -2047,6 +2047,10 @@ payments.toggleStarGiftsPinnedToTop#1513e7b0 peer:InputPeer stargift:Vector<Inpu
 payments.getResaleStarGifts#7a5fa236 flags:# sort_by_price:flags.1?true sort_by_num:flags.2?true for_craft:flags.4?true stars_only:flags.5?true attributes_hash:flags.0?long gift_id:long attributes:flags.3?Vector<StarGiftAttributeId> offset:string limit:int = payments.ResaleStarGifts;
 payments.updateStarGiftPrice#edbe6ccb stargift:InputSavedStarGift resell_amount:StarsAmount = Updates;
 payments.getStarGiftCollections#981b91dd peer:InputPeer hash:long = payments.StarGiftCollections;
+payments.createStarGiftCollection#1f4a0e87 peer:InputPeer title:string stargift:Vector<InputSavedStarGift> = StarGiftCollection;
+payments.updateStarGiftCollection#4fddbee7 flags:# peer:InputPeer collection_id:int title:flags.0?string delete_stargift:flags.1?Vector<InputSavedStarGift> add_stargift:flags.2?Vector<InputSavedStarGift> order:flags.3?Vector<InputSavedStarGift> = StarGiftCollection;
+payments.reorderStarGiftCollections#c32af4cc peer:InputPeer order:Vector<int> = Bool;
+payments.deleteStarGiftCollection#ad5648e8 peer:InputPeer collection_id:int = Bool;
 payments.getUniqueStarGiftValueInfo#4365af6b slug:string = payments.UniqueStarGiftValueInfo;
 payments.checkCanSendGift#c0c4edc9 gift_id:long = payments.CheckCanSendGiftResult;
 payments.getStarGiftAuctionState#5c9ff4d6 auction:InputStarGiftAuction version:int = payments.StarGiftAuctionState;
