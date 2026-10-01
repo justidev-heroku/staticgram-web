@@ -32,6 +32,13 @@ const DEV_BUNDLE_WARMUP_CLIENT_FILES = [
   'src/bundles/calls.ts',
   'src/bundles/stars.ts',
 ];
+// Vite's default target ("baseline widely available") is Safari 16.4+. Lightning CSS then rewrites
+// `@media (max-width: 600px)` into range syntax `(width<=600px)`, which Safari < 16.4 silently treats as
+// non-matching, so on iOS 15 (iPhone 6s/7) the whole mobile layout was dropped. Keep Safari/iOS 15 in targets.
+const BUILD_TARGET = ['chrome111', 'edge111', 'firefox114', 'safari15', 'ios15'];
+// Safari < 16 drops `overflow: clip` (content becomes `visible`). Lightning CSS dedupes a source-level
+// fallback, so prepend `hidden` to the minified output instead.
+const OVERFLOW_CLIP_RE = /([{;])(overflow(?:-[xy])?):clip(\s*!important)?(?=[;}])/g;
 const IMAGE_ASSET_RE = /\.(?:avif|gif|jpe?g|png|svg|webp)$/i;
 const WATCHED_STATIC_COPY_TARGETS: Target[] = [
   {
@@ -99,6 +106,7 @@ export default defineConfig(({ mode }): UserConfig => {
       isDevelopmentMode,
       rootDir: DIR_NAME,
     }),
+    buildOverflowClipFallbackPlugin(),
     viteStaticCopy({ targets: WATCHED_STATIC_COPY_TARGETS }),
     viteStaticCopy({
       targets: UNWATCHED_STATIC_COPY_TARGETS,
@@ -232,6 +240,8 @@ export default defineConfig(({ mode }): UserConfig => {
       },
     },
     build: {
+      target: BUILD_TARGET,
+      cssTarget: BUILD_TARGET,
       sourcemap: true,
       assetsInlineLimit: (filePath) => (IMAGE_ASSET_RE.test(filePath) ? false : undefined),
     },
@@ -248,6 +258,21 @@ export default defineConfig(({ mode }): UserConfig => {
     plugins,
   };
 });
+
+function buildOverflowClipFallbackPlugin(): Plugin {
+  return {
+    name: 'telegram:overflow-clip-fallback',
+    apply: 'build',
+    enforce: 'post',
+    generateBundle(_outputOptions, bundle) {
+      Object.values(bundle).forEach((output) => {
+        if (output.type !== 'asset' || !output.fileName.endsWith('.css') || typeof output.source !== 'string') return;
+
+        output.source = output.source.replace(OVERFLOW_CLIP_RE, '$1$2:hidden$3;$2:clip$3');
+      });
+    },
+  };
+}
 
 function createBundleReportPlugin(plugin: BundleReportPlugin, workerReportBundles: OutputBundle[]): Plugin {
   return {

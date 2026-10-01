@@ -1,3 +1,5 @@
+import { gunzipSync } from 'fflate';
+
 import type { EmojiFitzModifier } from '../../util/emoji/skinTone';
 import type { CancellableCallback } from '../../util/PostMessageConnector';
 
@@ -142,6 +144,11 @@ async function fetchAnimationData(tgsUrl: string) {
 
   if (!response.body) {
     return new Uint8Array(0);
+  }
+
+  // Safari < 16.4 (iOS 15) has no `DecompressionStream`
+  if (typeof DecompressionStream === 'undefined') {
+    return gunzipSync(new Uint8Array(await response.arrayBuffer()));
   }
 
   // Prefer native gzip decompression over library. This use case has ~same speed
