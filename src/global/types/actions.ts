@@ -3216,6 +3216,11 @@ export interface ActionPayloads {
     price: ApiTypeCurrencyAmount;
   } & WithTabId;
   closeGiftOfferAcceptModal: WithTabId | undefined;
+  openGiftOfferSendModal: {
+    peerId: string;
+    gift: ApiStarGiftUnique;
+  } & WithTabId;
+  closeGiftOfferSendModal: WithTabId | undefined;
   updateSelectedGiftCollection: {
     peerId: string;
     collectionId: number;
@@ -3258,6 +3263,12 @@ export interface ActionPayloads {
   } & WithTabId;
   declineStarGiftOffer: {
     messageId: number;
+  } & WithTabId;
+  sendStarGiftOffer: {
+    peerId: string;
+    gift: ApiStarGiftUnique;
+    price: ApiTypeCurrencyAmount;
+    duration: number;
   } & WithTabId;
 
   openStarsGiftModal: ({

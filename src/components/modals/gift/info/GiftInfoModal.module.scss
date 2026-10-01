@@ -171,6 +171,16 @@
   flex-direction: column;
 }
 
+.footerButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.offerButton {
+  text-transform: none;
+}
+
 .unknown {
   margin-inline-start: 0.25rem;
 }

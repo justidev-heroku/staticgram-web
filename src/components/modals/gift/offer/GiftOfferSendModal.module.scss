@@ -1,0 +1,47 @@
+.description {
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.375;
+  color: var(--color-text);
+}
+
+.inputPrice {
+  margin-top: 0.5rem;
+
+  :global(.input-group) {
+    margin-bottom: 0.25rem;
+  }
+}
+
+.hint {
+  display: flex;
+  gap: 0.5rem;
+
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.balance {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.sectionTitle {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.durations {
+  margin-bottom: 1rem;
+}
+
+.error {
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-error);
+}

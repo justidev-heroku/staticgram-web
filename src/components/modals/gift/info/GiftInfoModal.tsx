@@ -16,6 +16,7 @@ import { selectPeer, selectPeerPaidMessagesStars, selectUser } from '../../../..
 import buildClassName from '../../../../util/buildClassName';
 import { copyTextToClipboard } from '../../../../util/clipboard';
 import { formatDateTimeToString } from '../../../../util/dates/oldDateFormat';
+import { isUserId } from '../../../../util/entities/ids';
 import { formatCurrency, formatCurrencyAsString } from '../../../../util/formatCurrency';
 import {
   formatStarsAsIcon, formatStarsAsText, formatTonAsIcon, formatTonAsText,
@@ -103,6 +104,7 @@ const GiftInfoModal = ({
     openGiftInfoValueModal,
     openGiftDescriptionRemoveModal,
     openGiftPreviewModal,
+    openGiftOfferSendModal,
   } = getActions();
 
   const [isConvertConfirmOpen, openConvertConfirm, closeConvertConfirm] = useFlag();
@@ -176,6 +178,10 @@ const GiftInfoModal = ({
     : undefined;
   const canBuyGift = !isSelfUnique && gift?.type === 'starGiftUnique'
     && gift.ownerId !== currentUserId && Boolean(resellPrice);
+  // Offers go only to user owners whose collectible is still in Telegram
+  const canOfferGift = !isSelfUnique && gift?.type === 'starGiftUnique' && Boolean(gift.offerMinStars)
+    && Boolean(gift.ownerId) && isUserId(gift.ownerId) && gift.ownerId !== currentUserId
+    && !gift.ownerAddress && !gift.isBurned;
 
   const giftOwnerTitle = (() => {
     if (!isGiftUnique) return undefined;
@@ -238,6 +244,11 @@ const GiftInfoModal = ({
 
   const closeConfirmModal = useLastCallback(() => {
     setIsConfirmModalOpen(false);
+  });
+
+  const handleOfferGift = useLastCallback(() => {
+    if (gift?.type !== 'starGiftUnique' || !gift.ownerId) return;
+    openGiftOfferSendModal({ peerId: gift.ownerId, gift });
   });
 
   const handleConfirmBuyGift = useLastCallback(() => {
@@ -318,24 +329,35 @@ const GiftInfoModal = ({
   }, [gift, giftAttributes, releasedByPeer, lang]);
 
   const renderFooterButton = useLastCallback(() => {
+    const offerButton = canOfferGift ? (
+      <Button className={styles.offerButton} isText={canBuyGift} onClick={handleOfferGift}>
+        {lang('GiftOfferMakeButton')}
+      </Button>
+    ) : undefined;
+
     if (canBuyGift) {
       return (
-        <Button className={styles.buyButton} onClick={handleBuyGift}>
-          <span>
-            {lang('ButtonBuyGift', {
-              stars: formatCurrency(lang, resellPrice.amount, resellPrice.currency, { asFontIcon: true }),
-            }, { withNodes: true })}
-          </span>
-          {resellPrice?.currency === TON_CURRENCY_CODE && Boolean(resellPriceInStars) && (
-            <span className={styles.footerHint}>
-              {lang('GiftBuyEqualsTo', {
-                stars: formatStarsAsIcon(lang, resellPriceInStars.amount, { asFont: true }),
+        <div className={styles.footerButtons}>
+          <Button className={styles.buyButton} onClick={handleBuyGift}>
+            <span>
+              {lang('ButtonBuyGift', {
+                stars: formatCurrency(lang, resellPrice.amount, resellPrice.currency, { asFontIcon: true }),
               }, { withNodes: true })}
             </span>
-          )}
-        </Button>
+            {resellPrice?.currency === TON_CURRENCY_CODE && Boolean(resellPriceInStars) && (
+              <span className={styles.footerHint}>
+                {lang('GiftBuyEqualsTo', {
+                  stars: formatStarsAsIcon(lang, resellPriceInStars.amount, { asFont: true }),
+                }, { withNodes: true })}
+              </span>
+            )}
+          </Button>
+          {offerButton}
+        </div>
       );
     }
+
+    if (offerButton) return offerButton;
 
     if (canFocusUpgrade) {
       return (
@@ -879,7 +901,7 @@ const GiftInfoModal = ({
         closeButtonColor={isGiftUnique ? 'translucent-white' : undefined}
         moreMenuItems={moreMenuItems}
         onClose={handleClose}
-        withBalanceBar={Boolean(canBuyGift)}
+        withBalanceBar={Boolean(canBuyGift || canOfferGift)}
         currencyInBalanceBar={confirmPrice?.currency}
         isLowStackPriority={renderingModal?.craftSlotIndex !== undefined ? true : undefined}
       />

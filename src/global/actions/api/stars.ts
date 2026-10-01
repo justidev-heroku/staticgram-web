@@ -14,11 +14,13 @@ import {
 } from '../../../config';
 import { getCurrentTabId } from '../../../util/establishMultitabRole';
 import { buildCollectionByCallback, buildCollectionByKey } from '../../../util/iteratees';
+import { getTranslationFn } from '../../../util/localization';
 import { getServerTime } from '../../../util/serverTime';
 import { callApi } from '../../../api/gramjs';
 import { preloadGiftAttributeStickers } from '../../../components/common/helpers/gifts';
 import { RESALE_GIFTS_LIMIT } from '../../../limits';
 import { areInputSavedGiftsEqual, getRequestInputSavedStarGift } from '../../helpers/payments';
+import { getPeerTitle } from '../../helpers/peers';
 import { addActionHandler, getGlobal, getPromiseActions, setGlobal } from '../../index';
 import {
   appendStarsSubscriptions,
@@ -743,6 +745,39 @@ addActionHandler('declineStarGiftOffer', async (global, actions, payload): Promi
   await callApi('resolveStarGiftOffer', {
     offerMsgId: messageId,
     shouldDecline: true,
+  });
+});
+
+addActionHandler('sendStarGiftOffer', async (global, actions, payload): Promise<void> => {
+  const {
+    peerId, gift, price, duration, tabId = getCurrentTabId(),
+  } = payload;
+
+  const peer = selectPeer(global, peerId);
+  if (!peer) return;
+
+  const result = await callApi('sendStarGiftOffer', {
+    peer,
+    slug: gift.slug,
+    price,
+    duration,
+  });
+
+  if (!result) return;
+
+  actions.loadStarStatus();
+  global = getGlobal();
+  const updatedPeer = selectPeer(global, peerId);
+  actions.showNotification({
+    icon: 'check',
+    message: {
+      key: 'GiftOfferSentNotification',
+      variables: {
+        gift: `${gift.title} #${gift.number}`,
+        user: updatedPeer ? getPeerTitle(getTranslationFn(), updatedPeer) || '' : '',
+      },
+    },
+    tabId,
   });
 });
 

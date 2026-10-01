@@ -1,5 +1,6 @@
 import { Api as GramJs } from '../../../lib/gramjs';
 import { RPCError } from '../../../lib/gramjs/errors';
+import { generateRandomBigInt } from '../../../lib/gramjs/Helpers';
 
 import type { GiftProfileFilterOptions, ResaleGiftsFilterOptions } from '../../../types';
 import type {
@@ -628,6 +629,28 @@ export function resolveStarGiftOffer({
   return invokeRequest(new GramJs.payments.ResolveStarGiftOffer({
     offerMsgId,
     decline: shouldDecline || undefined,
+  }), {
+    shouldReturnTrue: true,
+  });
+}
+
+export function sendStarGiftOffer({
+  peer,
+  slug,
+  price,
+  duration,
+}: {
+  peer: ApiPeer;
+  slug: string;
+  price: ApiTypeCurrencyAmount;
+  duration: number;
+}) {
+  return invokeRequest(new GramJs.payments.SendStarGiftOffer({
+    peer: buildInputPeer(peer.id, peer.accessHash),
+    slug,
+    price: buildInputStarsAmount(price),
+    duration,
+    randomId: generateRandomBigInt(),
   }), {
     shouldReturnTrue: true,
   });

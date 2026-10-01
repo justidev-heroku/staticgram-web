@@ -988,6 +988,11 @@ export type TabState = {
     details: ApiStarGiftAttributeOriginalDetails;
   };
 
+  giftOfferSendModal?: {
+    peerId: string;
+    gift: ApiStarGiftUnique;
+  };
+
   giftOfferAcceptModal?: {
     peerId: string;
     messageId: number;

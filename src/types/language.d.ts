@@ -1844,6 +1844,11 @@ export interface LangPair {
   'GiftOfferAccept': undefined;
   'GiftOfferRejectTitle': undefined;
   'GiftOfferAcceptTitle': undefined;
+  'GiftOfferMakeButton': undefined;
+  'GiftOfferSendTitle': undefined;
+  'GiftOfferEnterPrice': undefined;
+  'GiftOfferDuration': undefined;
+  'GiftOfferNotEnoughStars': undefined;
   'ActionSuggestedPhotoButton': undefined;
   'ActionSuggestedVideoTitle': undefined;
   'ActionSuggestedVideoText': undefined;
@@ -3509,6 +3514,20 @@ export interface LangPairWithVariables<V = LangVariable> {
   'GiftOfferPriceLow': {
     'percent': V;
     'gift': V;
+  };
+  'GiftOfferSendText': {
+    'user': V;
+    'gift': V;
+  };
+  'GiftOfferMinPrice': {
+    'amount': V;
+  };
+  'GiftOfferBalance': {
+    'amount': V;
+  };
+  'GiftOfferSentNotification': {
+    'gift': V;
+    'user': V;
   };
   'GiftOfferPriceHigh': {
     'percent': V;

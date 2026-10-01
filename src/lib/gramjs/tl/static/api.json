@@ -392,6 +392,7 @@
     "payments.getStarGiftAuctionAcquiredGifts",
     "payments.getStarGiftActiveAuctions",
     "payments.resolveStarGiftOffer",
+    "payments.sendStarGiftOffer",
     "payments.getCraftStarGifts",
     "payments.craftStarGift",
     "payments.getStarGiftUpgradeAttributes",

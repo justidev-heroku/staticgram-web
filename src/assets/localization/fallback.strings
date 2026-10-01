@@ -2382,6 +2382,15 @@
 "GiftOfferAcceptReceive" = "You will receive **{amount}** after fees.";
 "GiftOfferAcceptButton" = "Sell for {amount}";
 "GiftOfferPriceLow" = "The price you are offered is **{percent}** lower than the average price for {gift}";
+"GiftOfferMakeButton" = "Make an Offer";
+"GiftOfferSendTitle" = "Offer to Buy";
+"GiftOfferSendText" = "Offer **{user}** to sell you **{gift}**. The Stars are held until the offer is accepted, and returned if it is rejected or expires.";
+"GiftOfferEnterPrice" = "Price in Stars";
+"GiftOfferMinPrice" = "Minimum offer is **{amount}**.";
+"GiftOfferBalance" = "Balance: {amount}";
+"GiftOfferDuration" = "Offer duration";
+"GiftOfferNotEnoughStars" = "Not enough Stars on your balance.";
+"GiftOfferSentNotification" = "Offer for {gift} sent to {user}";
 "GiftOfferPriceHigh" = "The price you are offered is **{percent}** higher than the average price for {gift}";
 "ActionSuggestedPhotoYou" = "You suggested this photo for {user}'s StaticGram profile.";
 "ActionSuggestedPhoto" = "{user} suggests this photo for your StaticGram profile.";
