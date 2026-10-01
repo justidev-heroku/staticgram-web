@@ -1,0 +1,111 @@
+.mask {
+  position: fixed;
+  z-index: var(--z-ui-loader-mask);
+  top: 0;
+  right: 0;
+  left: 0;
+
+  display: flex;
+
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.main {
+  flex: 1;
+
+  @media (min-width: 926px) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 100%;
+    &.foldersSidebarVisible {
+      grid-template-columns: auto auto 1fr;
+    }
+  }
+}
+
+.foldersSidebar {
+  width: var(--folders-sidebar-width);
+  margin: 1rem 0 1rem 1rem;
+  border-radius: var(--border-radius-island);
+
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(25px);
+}
+
+.left {
+  flex: 1;
+
+  width: 33vw;
+  min-width: 16rem;
+  max-width: 26.5rem;
+  margin: 1rem;
+  border-radius: var(--border-radius-island);
+
+  background: var(--color-background);
+  box-shadow: var(--shadow-island);
+
+  @media (min-width: 926px) {
+    max-width: 40vw;
+
+    .foldersSidebarVisible & {
+      max-width: calc(40vw - var(--folders-sidebar-width));
+      margin-left: 0.5rem;
+    }
+  }
+
+  @media (min-width: 1276px) {
+    width: 25vw;
+    max-width: 33vw;
+
+    .foldersSidebarVisible & {
+      max-width: calc(33vw - var(--folders-sidebar-width));
+    }
+  }
+
+  @media (max-width: 1275px) {
+    flex: 2;
+  }
+
+  @media (max-width: 925px) {
+    width: 26.5rem !important;
+  }
+
+  @media (max-width: 600px) {
+    width: 100vw !important;
+    max-width: none;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+
+    box-shadow: none;
+  }
+}
+
+.middle {
+  flex: 3;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+.right {
+  position: absolute;
+  z-index: 1;
+  top: 1rem;
+  right: var(--right-column-padding);
+  bottom: 1rem;
+
+  width: var(--right-column-content-width);
+  border-radius: var(--border-radius-island);
+
+  background: var(--color-background-secondary);
+  box-shadow: var(--shadow-island);
+}
+
+.blank {
+  flex: 1;
+  background-color: var(--color-background);
+}

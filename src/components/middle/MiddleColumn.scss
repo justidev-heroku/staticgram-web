@@ -1,0 +1,288 @@
+#MiddleColumn {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  justify-content: center;
+
+  min-width: 0;
+  height: 100%;
+
+  opacity: 0;
+
+  transition: opacity 0.3s ease;
+
+  &.ui-ready {
+    opacity: 1;
+  }
+
+  .messages-layout {
+    --slide-transition: var(--top-stack-transition);
+
+    position: relative;
+
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    > .Transition {
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+
+      > .Transition_slide {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  }
+
+  .Composer {
+    .composer-wrapper {
+      transform: scaleX(1) translateX(0);
+      transition: transform var(--select-transition), border-bottom-right-radius var(--select-transition);
+
+      &::before {
+        transform: scaleX(-1) translateX(0);
+        transition: transform var(--select-transition);
+      }
+
+      body.no-message-composer-animations & {
+        &,
+        &::before {
+          transition: none !important;
+        }
+      }
+    }
+
+    .message-input-wrapper,
+    &::before {
+      opacity: 1;
+      transition: opacity var(--select-transition);
+
+      body.no-message-composer-animations & {
+        transition: none !important;
+      }
+    }
+
+    > .Button {
+      --composer-button-transition:
+        border-radius 0.15s,
+        opacity var(--select-transition),
+        transform var(--select-transition),
+        background-color 0.15s,
+        color 0.15s;
+
+      transform: scale(1);
+      opacity: 1;
+      transition: var(--composer-button-transition);
+
+      // The paid "Send Stars" pill animates its width (see `main-button.paid` in `Composer.scss`)
+      &.main-button {
+        /* stylelint-disable-next-line plugin/no-low-performance-animation-properties */
+        transition: var(--composer-button-transition), width 0.25s ease-out;
+      }
+
+      body.no-message-composer-animations & {
+        transition: none !important;
+      }
+    }
+
+    &.hover-disabled,
+    &:not(.shown) {
+      pointer-events: none;
+    }
+
+    &:not(.shown) {
+      .ComposerEmbeddedMessage {
+        height: 0;
+      }
+
+      .composer-wrapper {
+        border-bottom-right-radius: var(--border-radius-messages);
+
+        &::before {
+          transform: scaleX(-1) translateX(200%);
+        }
+      }
+
+      #editable-message-text {
+        height: var(--base-height) !important;
+      }
+
+      .message-input-wrapper,
+      &::before {
+        opacity: 0;
+      }
+
+      > .Button {
+        transform: scale(0.5);
+        opacity: 0 !important;
+      }
+    }
+  }
+
+  .Composer.is-chat-composer {
+    transform: scaleX(1) translateX(0);
+    transition: transform var(--select-transition), opacity var(--select-transition);
+
+    body.no-message-composer-animations & {
+      transition: none !important;
+    }
+
+    .composer-wrapper {
+      transform: none;
+      transition: none;
+    }
+
+    &:not(.shown) {
+      transform: none;
+      opacity: 0;
+
+      .composer-wrapper {
+        transform: none;
+      }
+
+      > .Button {
+        transform: none;
+      }
+    }
+  }
+
+  .messaging-disabled {
+    transition: opacity var(--select-transition);
+
+    body.no-page-transitions & {
+      transition: none !important;
+    }
+
+    &:not(.shown) {
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    &-inner {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 2.5rem;
+
+      color: var(--color-text-secondary);
+      text-align: center;
+
+      background: var(--color-background);
+      box-shadow: var(--shadow-footer);
+    }
+  }
+
+  .middle-column-footer {
+    --base-height: var(--composer-height);
+    --footer-side-inset: 1rem;
+
+    position: absolute;
+    z-index: var(--z-middle-footer);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translate3d(0, 0, 0);
+
+    display: flex;
+    align-items: flex-end;
+
+    width: 100%;
+    max-width: var(--messages-container-width);
+    height: calc-size(auto, size);
+    margin: 0 auto;
+    padding: 0 var(--footer-side-inset);
+
+    /* stylelint-disable-next-line plugin/no-low-performance-animation-properties */
+    transition: height var(--layer-transition), transform var(--layer-transition);
+
+    body.no-page-transitions & {
+      transition: none !important;
+    }
+
+    body.no-right-column-animations & {
+      transition: none !important;
+    }
+
+    &:not(.no-composer) {
+      padding-bottom: 0;
+
+      @media (max-width: 600px) {
+        padding-bottom: env(safe-area-inset-bottom);
+
+        body.keyboard-visible & {
+          padding-bottom: 0;
+        }
+      }
+    }
+
+    @media (min-width: 1276px) {
+      width: calc(100% - var(--right-column-width));
+
+      #Main.right-column-open & {
+        transform: translate3d(calc(var(--right-column-width) / -2), 0, 0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      --footer-side-inset: 0.5rem;
+
+      body.is-symbol-menu-open & {
+        transform: translate3d(0, calc(-1 * (var(--symbol-menu-height))), 0);
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    overflow: hidden;
+  }
+}
+
+/* Common styles for message list fade-out shadow */
+.Composer,
+.messaging-disabled {
+  margin-bottom: var(--composer-bottom-gap);
+
+  @media (max-width: 600px) {
+    margin-bottom: var(--composer-bottom-gap-mobile);
+  }
+}
+
+.Composer,
+.messaging-disabled {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.MessageSelectToolbar-inner {
+  .mask-image-disabled & {
+    border-radius: var(--composer-pill-radius);
+    box-shadow: var(--shadow-footer);
+  }
+}
+
+.messaging-disabled {
+  .mask-image-disabled & {
+    border-radius: var(--border-radius-messages);
+  }
+}
+
+.resize-handle {
+  cursor: ew-resize;
+
+  position: absolute;
+  z-index: var(--z-resize-handle);
+  top: 0;
+  bottom: 0;
+  left: -0.25rem;
+
+  width: 0.5rem;
+}

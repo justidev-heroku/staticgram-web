@@ -1,0 +1,35 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Declare files that will always have LF line endings on checkout.
+.htaccess text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.map text eol=lf
+*.md text eol=lf
+*.svg text eol=lf
+*.sh text eol=lf
+dev/icons-templates/*.template text eol=lf
+
+# Denote all files that are truly binary and should not be modified.
+*.gif binary
+*.icns binary
+*.ico binary
+*.jpeg binary
+*.jpg binary
+*.mp3 binary
+*.mp4 binary
+*.png binary
+*.tgs binary
+*.tiff binary
+*.ttf binary
+*.wasm binary
+*.wav binary
+*.webp binary
+*.woff binary
+*.woff2 binary
