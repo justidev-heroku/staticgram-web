@@ -351,7 +351,7 @@ export const RE_LINK_TEMPLATE = '((ftp|https?):\\/\\/)?((www\\.)?[-a-zA-Z0-9@:%.
 export const RE_MENTION_TEMPLATE = '(@[\\w\\d_-]+)';
 export const RE_TG_LINK = /^(?:tg|sg):(\/\/)?/i;
 // eslint-disable-next-line @stylistic/max-len
-export const RE_TME_LINK = /^(https?:\/\/)?(?:([-a-zA-Z0-9@:%_+~#=]{1,32}\.)?t\.me|telegram\.(?:me|dog)|staticgram\.top|sg\.guardianbot\.lol)(?=[:/?#]|$)/i;
+export const RE_TME_LINK = /^(https?:\/\/)?(?:([-a-zA-Z0-9@:%_+~#=]{1,32}\.)?t\.me|telegram\.(?:me|dog)|(?:www\.)?staticgram\.top|sg\.guardianbot\.lol)(?=[:/?#]|$)/i;
 export const RE_TELEGRAM_LINK = /^(https?:\/\/)?telegram\.org\//i;
 export const TME_LINK_PREFIX = 'https://staticgram.top/';
 export const BOT_FATHER_USERNAME = 'botfather';
@@ -361,7 +361,7 @@ export const PURCHASE_USERNAME = 'auction';
 export const ACCEPTABLE_USERNAME_ERRORS = new Set([USERNAME_PURCHASE_ERROR, 'USERNAME_INVALID']);
 export const TME_WEB_DOMAINS = new Set([
   't.me', 'telegram.me', 'telegram.dog', 'web.t.me', 'a.t.me', 'k.t.me', 'z.t.me',
-  'staticgram.top', 'web.staticgram.top', 'sg.guardianbot.lol', 'web.guardianbot.lol',
+  'staticgram.top', 'www.staticgram.top', 'web.staticgram.top', 'sg.guardianbot.lol', 'web.guardianbot.lol',
 ]);
 export const WEB_APP_PLATFORM = 'weba';
 export const LANG_PACK = 'weba';
