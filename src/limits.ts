@@ -157,6 +157,8 @@ export const DEFAULT_APP_CONFIG: ApiAppConfig = {
   bandwidthPremiumNotifyPeriod: 3600,
   bandwidthPremiumUploadSpeedup: 10,
   urlAuthDomains: [
+    'staticgram.top',
+    'web.staticgram.top',
     'sg.guardianbot.lol',
     'web.guardianbot.lol',
     'web.telegram.org',
@@ -170,6 +172,8 @@ export const DEFAULT_APP_CONFIG: ApiAppConfig = {
     'https',
   ],
   whitelistedDomains: [
+    'staticgram.top',
+    'web.staticgram.top',
     'sg.guardianbot.lol',
     'web.guardianbot.lol',
     'telegram.dog',

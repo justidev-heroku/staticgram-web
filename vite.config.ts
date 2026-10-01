@@ -301,10 +301,17 @@ function setViteEnv(env: Record<string, string>) {
 }
 
 function buildCsp(appEnv: string, telesrvHost: string) {
-  const telesrvWs = telesrvHost ? `wss://${telesrvHost}` : '';
+  const wsSources = [
+    telesrvHost ? `wss://${telesrvHost}` : '',
+    'wss://staticgram.top',
+    'wss://web.staticgram.top',
+    'wss://sg.guardianbot.lol',
+    'wss://web.guardianbot.lol',
+  ].filter(Boolean);
+  const telesrvWs = Array.from(new Set(wsSources)).join(' ');
   return `
   default-src 'self';
-  connect-src 'self' ${telesrvWs} wss://sg.guardianbot.lol wss://web.guardianbot.lol blob: http: https:
+  connect-src 'self' ${telesrvWs} blob: http: https:
     ${appEnv === 'development' ? 'ws: wss: ipc:' : ''};
   script-src 'self' 'wasm-unsafe-eval';
   worker-src 'self'${appEnv === 'development' ? ' blob:' : ''};
