@@ -258,6 +258,15 @@ export function prepareTrackSwitch(nextKey?: TrackKey) {
   setProgress(0);
 }
 
+// Firefox reports a failed audio output (`OnMediaSinkAudioError`, e.g. no output device) as a media error,
+// yet keeps playing silently with the clock running. Only an error that actually stopped the element is fatal
+export function isFatalMediaError(element: HTMLMediaElement) {
+  return element.paused
+    || element.ended
+    || element.networkState === HTMLMediaElement.NETWORK_NO_SOURCE
+    || element.readyState < HTMLMediaElement.HAVE_CURRENT_DATA;
+}
+
 export function isTrackAudiblyPlaying(key: TrackKey) {
   if (state.trackKey !== key) return false;
 
@@ -422,6 +431,8 @@ function bindElement(element: HTMLAudioElement) {
   boundElements.add(element);
 
   element.addEventListener('error', () => {
+    if (!isFatalMediaError(element)) return;
+
     const key = elementKeys.get(element);
     if (key !== undefined) cancelPlaybackIntent(key);
   });
@@ -465,6 +476,7 @@ function bindElement(element: HTMLAudioElement) {
   });
 
   element.addEventListener('timeupdate', () => {
+    restorePlayingState(element);
     syncPlayingProgress(element);
   });
 
@@ -486,6 +498,15 @@ function bindElement(element: HTMLAudioElement) {
     if (selectCurrentTrackKey(getGlobal()) !== elementKeys.get(element)) return;
     getActions().playNextTrack({ isAuto: true });
   });
+}
+
+// Time moving forward means the element is playing, even if a non-fatal error has reset the state
+function restorePlayingState(element: HTMLAudioElement) {
+  if (state.isPlaying || element.paused || element.ended) return;
+  if (!isCurrent(element) || isSafariPatchInProgress(element)) return;
+
+  updateState({ isPlaying: true });
+  if (ownsMediaSession(element)) setPlaybackState('playing');
 }
 
 function startProgressLoop() {

@@ -93,11 +93,15 @@ export default function useAudioPlayback({
         setElementDuration(Number.isFinite(element.duration) ? element.duration : 0);
         break;
       case 'ended':
-      case 'error':
         setIsPlaying(false);
+        break;
+      case 'error':
+        if (playbackController.isFatalMediaError(element)) setIsPlaying(false);
         break;
       case 'timeupdate':
       default: {
+        // Time moving forward means the element is playing, even if a non-fatal error has reset the state
+        if (e.type === 'timeupdate' && !element.paused && !element.ended) setIsPlaying(true);
         if (noProgressUpdates) break;
         // `pause()` fires `timeupdate` too, which would override a progress preview with the actual position
         if (e.type === 'timeupdate' && element.paused) break;
