@@ -397,10 +397,10 @@ export const MAX_MEDIA_FILES_FOR_ALBUM = 10;
 export const MAX_ACTIVE_PINNED_CHATS = 5;
 export const SCHEDULED_WHEN_ONLINE = 0x7FFFFFFE;
 export const LANG_PACKS = ['android', 'ios', 'tdesktop', 'macos'] as const;
-export const FEEDBACK_URL = 'https://bugs.telegram.org/?tag_ids=41&sort=time';
-export const FAQ_URL = 'https://telegram.org/faq';
-export const PRIVACY_URL = 'https://staticgram.top/privacy';
-export const MINI_APP_TOS_URL = 'https://telegram.org/tos/mini-apps';
+export const FEEDBACK_URL = 'https://docs.staticgram.top/faq';
+export const FAQ_URL = 'https://docs.staticgram.top/faq';
+export const PRIVACY_URL = 'https://docs.staticgram.top/privacy';
+export const MINI_APP_TOS_URL = 'https://docs.staticgram.top/tos';
 export const GENERAL_TOPIC_ID = 1;
 export const FRESH_AUTH_PERIOD = 86400; // 1 day
 export const GIVEAWAY_BOOST_PER_PREMIUM = 4;

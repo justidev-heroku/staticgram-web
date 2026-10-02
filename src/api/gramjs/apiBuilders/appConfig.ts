@@ -280,7 +280,9 @@ export function buildAppConfig(json: GramJs.TypeJSONValue, hash: number): ApiApp
     tonSuggestedPostAmountMax: appConfig.ton_suggested_post_amount_max,
     tonSuggestedPostAmountMin: appConfig.ton_suggested_post_amount_min,
     tonUsdRate: appConfig.ton_usd_rate,
-    tonTopupUrl: appConfig.ton_topup_url,
+    // StaticGram: never send users to fragment.com, fall back to our GRAM top-up page
+    tonTopupUrl: appConfig.ton_topup_url && !/fragment\.com/i.test(appConfig.ton_topup_url)
+      ? appConfig.ton_topup_url : DEFAULT_APP_CONFIG.tonTopupUrl,
     pollMaxAnswers: appConfig.poll_answers_max,
     pollClosePeriodMax: appConfig.poll_close_period_max,
     pollCountriesMax: appConfig.poll_countries_max,

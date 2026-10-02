@@ -6,7 +6,7 @@ import readStrings from './readStrings';
 
 const FALLBACK_LANG_CODE = 'en';
 const FALLBACK_VERSION = 0;
-const FALLBACK_TRANSLATE_URL = `https://translations.telegram.org/${FALLBACK_LANG_CODE}/weba`;
+const FALLBACK_TRANSLATE_URL = 'https://docs.staticgram.top/';
 
 export default async function readFallbackStrings(): Promise<CachedLangData> {
   const file = await import('../../assets/localization/fallback.strings?raw');

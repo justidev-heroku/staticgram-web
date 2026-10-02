@@ -150,7 +150,7 @@ export const DEFAULT_APP_CONFIG: ApiAppConfig = {
   todoTitleLengthMax: 32,
   tonSuggestedPostAmountMax: 10000000000000,
   tonSuggestedPostAmountMin: 10000000,
-  tonTopupUrl: 'https://fragment.com/ads/topup',
+  tonTopupUrl: 'https://staticgram.top/gram-topup',
   storyViewersExpirePeriod: 86400,
   topicsPinnedLimit: 5,
   bandwidthPremiumDownloadSpeedup: 10,
