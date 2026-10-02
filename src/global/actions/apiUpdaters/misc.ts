@@ -1,3 +1,4 @@
+import type { RequiredGlobalActions } from '../../index';
 import type { ActionReturnType } from '../../types';
 
 import { SERVICE_NOTIFICATIONS_USER_ID } from '../../../config';
@@ -29,6 +30,17 @@ import {
   selectPeerStory,
   selectTabState,
 } from '../../selectors';
+
+const COLLECTIBLE_STATUSES_REFRESH_DELAY = 1500;
+let collectibleStatusesRefreshTimeout: number | undefined;
+
+function scheduleCollectibleStatusesRefresh(actions: RequiredGlobalActions) {
+  if (collectibleStatusesRefreshTimeout) return;
+  collectibleStatusesRefreshTimeout = window.setTimeout(() => {
+    collectibleStatusesRefreshTimeout = undefined;
+    actions.loadUserCollectibleStatuses();
+  }, COLLECTIBLE_STATUSES_REFRESH_DELAY);
+}
 
 addActionHandler('apiUpdate', (global, actions, update): ActionReturnType => {
   switch (update['@type']) {
@@ -322,6 +334,12 @@ addActionHandler('apiUpdate', (global, actions, update): ActionReturnType => {
           actions.requestConfetti({ withStars: true, tabId });
         });
         return undefined;
+      }
+
+      if (action?.type === 'starGiftUnique') {
+        // A unique gift was received, upgraded or transferred: refresh wearable collectible statuses
+        // (debounced, hash-based) so "Wear" works without reloading the tab.
+        scheduleCollectibleStatusesRefresh(actions);
       }
 
       if (!update.message.isOutgoing && update.message.chatId !== SERVICE_NOTIFICATIONS_USER_ID) return undefined;

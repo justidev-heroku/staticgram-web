@@ -1,4 +1,6 @@
-import { memo, useMemo, useRef, useState } from '../../../../lib/teact/teact';
+import {
+  memo, useEffect, useMemo, useRef, useState,
+} from '../../../../lib/teact/teact';
 import { getActions, getGlobal, withGlobal } from '../../../../global';
 
 import type {
@@ -73,6 +75,8 @@ type StateProps = {
 };
 
 const STICKER_SIZE = 120;
+const COLLECTIBLES_REFRESH_INTERVAL = 10000;
+let lastCollectiblesRefreshAt = 0;
 
 const GiftInfoModal = ({
   modal,
@@ -105,6 +109,7 @@ const GiftInfoModal = ({
     openGiftDescriptionRemoveModal,
     openGiftPreviewModal,
     openGiftOfferSendModal,
+    loadUserCollectibleStatuses,
   } = getActions();
 
   const [isConvertConfirmOpen, openConvertConfirm, closeConvertConfirm] = useFlag();
@@ -150,6 +155,19 @@ const GiftInfoModal = ({
   }, [starGiftUniqueSlug, collectibleEmojiStatuses]);
 
   const isSelfUnique = Boolean(selfCollectibleStatus);
+
+  // account.getCollectibleEmojiStatuses is otherwise fetched only once at startup, so a unique gift
+  // received or upgraded while the tab stays open is missing from the list and "Wear" stays disabled.
+  // Refetch (hash-based, cheap when unchanged) when the modal opens for a unique gift we do not know yet.
+  const shouldRefreshCollectibles = isOpen && Boolean(starGiftUniqueSlug) && !selfCollectibleStatus
+    && (gift?.type === 'starGiftUnique' && (gift.ownerId === currentUserId || Boolean(savedGift)));
+  useEffect(() => {
+    if (!shouldRefreshCollectibles) return;
+    const now = Date.now();
+    if (now - lastCollectiblesRefreshAt < COLLECTIBLES_REFRESH_INTERVAL) return;
+    lastCollectiblesRefreshAt = now;
+    loadUserCollectibleStatuses();
+  }, [shouldRefreshCollectibles, starGiftUniqueSlug]);
   const canFocusUpgrade = Boolean(savedGift?.upgradeMsgId);
 
   const canManage = !canFocusUpgrade && savedGift?.inputGift && (
