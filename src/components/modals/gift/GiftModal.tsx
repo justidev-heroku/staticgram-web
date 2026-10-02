@@ -80,6 +80,11 @@ const CATEGORY_LIST_STICKY_TOP = 3.5 * REM;
 
 const runThrottledForScroll = throttle((cb) => cb(), SCROLL_THROTTLE, true);
 
+// The gift catalog is otherwise loaded only once at startup, so newly released gifts
+// would not appear for long-lived tabs. Refresh it when the modal opens, at most every 30s.
+const GIFTS_REFRESH_INTERVAL = 30000;
+let lastGiftsRefreshAt = 0;
+
 const GiftModal: FC<OwnProps & StateProps> = ({
   modal,
   starGiftsById,
@@ -104,6 +109,7 @@ const GiftModal: FC<OwnProps & StateProps> = ({
     openGiftInMarket,
     closeResaleGiftsMarket,
     loadMyUniqueGifts,
+    loadStarGifts,
     updateResaleGiftsFilter,
     openGiftTransferConfirmModal,
     setGiftModalSelectedGift,
@@ -194,6 +200,15 @@ const GiftModal: FC<OwnProps & StateProps> = ({
       loadResaleGifts({ giftId });
     }
   }, [selectedResaleGift]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const now = Date.now();
+    if (now - lastGiftsRefreshAt < GIFTS_REFRESH_INTERVAL) return;
+    lastGiftsRefreshAt = now;
+    loadStarGifts();
+    loadMyUniqueGifts({ shouldRefresh: true });
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) {
