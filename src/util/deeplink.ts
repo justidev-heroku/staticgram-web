@@ -128,7 +128,8 @@ export const processDeepLink = (rawUrl: string, linkContext?: LinkContext): bool
     }
   }
 
-  if (!url.match(RE_TG_LINK)) {
+  // `url` has `sg:` already rewritten to `tg:` above; internal callers may pass either
+  if (!url.match(RE_TG_LINK) && !/^tg:/i.test(url)) {
     return false;
   }
 

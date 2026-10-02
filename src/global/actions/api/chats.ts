@@ -25,6 +25,7 @@ import {
   CHAT_LIST_LOAD_SLICE,
   DEBUG,
   GLOBAL_SUGGESTED_CHANNELS_ID,
+  RE_EXTERNAL_TELEGRAM_LINK,
   RE_TG_LINK,
   SAVED_FOLDER_ID,
   SERVICE_NOTIFICATIONS_USER_ID,
@@ -34,6 +35,7 @@ import {
   TOPICS_SLICE,
   TOPICS_SLICE_SECOND_LOAD,
 } from '../../../config';
+import { ensureProtocol } from '../../../util/browser/url';
 import { copyTextToClipboard } from '../../../util/clipboard';
 import { formatShareText, processDeepLink } from '../../../util/deeplink';
 import { isDeepLink } from '../../../util/deepLinkParser';
@@ -1722,6 +1724,12 @@ addActionHandler('openTelegramLink', async (global, actions, payload): Promise<v
     openStoryViewerByUsername,
     checkGiftCode,
   } = actions;
+
+  // StaticGram: real Telegram links (t.me, tg:) are not handled in-app
+  if (RE_EXTERNAL_TELEGRAM_LINK.test(url)) {
+    window.open(ensureProtocol(url), '_blank', 'noopener');
+    return;
+  }
 
   if (isDeepLink(url)) {
     const isProcessed = processDeepLink(url, linkContext);

@@ -159,13 +159,6 @@ export const DEFAULT_APP_CONFIG: ApiAppConfig = {
   urlAuthDomains: [
     'staticgram.top',
     'web.staticgram.top',
-    'sg.guardianbot.lol',
-    'web.guardianbot.lol',
-    'web.telegram.org',
-    'web.t.me',
-    'k.t.me',
-    'z.t.me',
-    'a.t.me',
   ],
   webAppAllowedProtocols: [
     'http',

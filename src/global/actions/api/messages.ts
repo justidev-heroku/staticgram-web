@@ -39,6 +39,7 @@ import {
   MAX_MEDIA_FILES_FOR_ALBUM,
   MESSAGE_ID_REQUIRED_ERROR,
   MESSAGE_LIST_SLICE,
+  RE_EXTERNAL_TELEGRAM_LINK,
   RE_TELEGRAM_LINK,
   SERVICE_NOTIFICATIONS_USER_ID,
   STARS_CURRENCY_CODE,
@@ -3096,6 +3097,12 @@ addActionHandler('openUrl', async (global, actions, payload): Promise<void> => {
       actions.openBrowserTab({ tab: { type: 'instantView', webPageId: webPage.id }, tabId });
       return;
     }
+  }
+
+  // StaticGram: links to the real Telegram (t.me, tg:) go straight to a new tab/handler
+  if (RE_EXTERNAL_TELEGRAM_LINK.test(urlWithProtocol)) {
+    window.open(parsedUrl, '_blank', 'noopener');
+    return;
   }
 
   const { appConfig, config } = global;

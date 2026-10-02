@@ -169,7 +169,7 @@ type OAuthLinkBuilderParams = Omit<BuilderParams<OAuthLink>, 'url'> & {
   url: string;
 };
 
-const ELIGIBLE_HOSTNAMES = new Set(['t.me', 'telegram.me', 'telegram.dog', 'staticgram.top', 'www.staticgram.top', 'sg.guardianbot.lol']);
+const ELIGIBLE_HOSTNAMES = new Set(['staticgram.top', 'www.staticgram.top']);
 const MAX_BOT_START_PARAMETER_LENGTH = 64;
 
 export function isDeepLink(link: string): boolean {
