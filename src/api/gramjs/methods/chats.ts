@@ -1006,6 +1006,10 @@ export async function joinChannel({
     return requestChatJoinWebView(result, theme);
   }
 
+  if (result instanceof GramJs.messages.ChatInviteJoinResultOk) {
+    handleGramJsUpdate(result.updates);
+  }
+
   return { type: 'ok' };
 }
 

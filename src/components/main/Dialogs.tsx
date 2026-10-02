@@ -146,14 +146,14 @@ const Dialogs = ({ dialogs, currentMessageList }: StateProps) => {
 
 function getErrorHeader(error: ApiDialogError) {
   if (error.isSlowMode) {
-    return 'Slowmode enabled';
+    return 'Включён медленный режим';
   }
 
   if (!error.hasErrorKey) {
     return 'Telegram';
   }
 
-  return 'Something went wrong';
+  return 'Что-то пошло не так';
 }
 
 export default memo(withGlobal(

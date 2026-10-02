@@ -913,6 +913,9 @@ addActionHandler('joinChannel', async (global, actions, payload): Promise<void> 
   } catch (error) {
     if ((error as ApiError).message === 'CHANNELS_TOO_MUCH') {
       actions.openLimitReachedModal({ limit: 'channels', tabId });
+    } else if ((error as ApiError).message === 'USER_ALREADY_PARTICIPANT') {
+      actions.openChat({ id: chatId, tabId });
+      actions.requestChatUpdate({ chatId });
     } else {
       actions.showDialog({ data: { type: 'error', ...(error as ApiError), hasErrorKey: true }, tabId });
     }
