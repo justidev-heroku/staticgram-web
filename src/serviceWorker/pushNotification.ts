@@ -188,7 +188,14 @@ export function handlePush(e: PushEvent) {
     return;
   }
 
-  e.waitUntil(showNotification(notification));
+  e.waitUntil((async () => {
+    // An open, visible app tab already decides on its own whether to notify
+    // (it skips the chat you are looking at), so a server push would only
+    // duplicate or override that.
+    const clients = await getClients();
+    if (clients.some((client) => client.focused || client.visibilityState === 'visible')) return;
+    await showNotification(notification);
+  })());
 }
 
 async function focusChatMessage(client: WindowClient, data: FocusMessageData) {
